@@ -1,9 +1,9 @@
 module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws" # 사용할 Module의 경로
-  version = "6.0.1"                         # Module의 버전
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "6.0.1"
 
-  name = var.name     # VPC의 이름
-  cidr = var.vpc_cidr # VPC의 CIDR 블록
+  name = var.name
+  cidr = var.vpc_cidr
 
   azs             = var.azs             # Availability Zones
   public_subnets  = var.public_subnets  # Public Subnet CIDR 블록
@@ -18,10 +18,12 @@ module "vpc" {
   tags = var.tags
 
   public_subnet_tags = {
-    Type = "public"
+    "kubernetes.io/role/elb" = "1"
+    Type                     = "public"
   }
 
   private_subnet_tags = {
-    Type = "private"
+    "kubernetes.io/role/internal-elb" = "1"
+    Type                              = "private"
   }
 }

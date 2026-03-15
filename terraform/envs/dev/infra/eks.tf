@@ -1,8 +1,8 @@
 module "eks" {
-  source = "../../modules/eks-managed"
+  source = "../../../modules/eks-managed"
 
-  cluster_name       = "dev-eks"
-  kubernetes_version = "1.33"
+  cluster_name       = "dev-eks-v2"
+  kubernetes_version = "1.34"
 
   # VPC 모듈 output 참조
   # module.vpc 값을 사용하므로 VPC가 먼저 생성된 뒤 EKS가 생성됨
@@ -20,10 +20,11 @@ module "eks" {
   node_groups = {
     default = {
       ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.large"]
+      instance_types = ["t3.medium"]
+      capacity_type  = "ON_DEMAND"
 
       min_size     = 2
-      max_size     = 4
+      max_size     = 3
       desired_size = 2
     }
   }
