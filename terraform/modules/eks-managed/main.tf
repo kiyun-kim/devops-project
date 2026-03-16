@@ -7,18 +7,30 @@ module "eks" {
 
   addons = {
     # Kubernetes 내부 DNS
-    coredns = {}
+    coredns = {
+      most_recent = true # EKS 버전에 맞는 최신 버전 자동 선택
+    }
 
     # IRSA 대신 사용하는 새로운 IAM 연결 방식
     eks-pod-identity-agent = {
+      most_recent    = true
       before_compute = true # 노드 생성 전에 먼저 설치
     }
 
     # Kubernetes 네트워크 라우팅 담당
-    kube-proxy = {}
+    kube-proxy = {
+      most_recent = true
+    }
 
     # Pod에 AWS ENI를 붙여주는 네트워크 플러그인
     vpc-cni = {
+      most_recent    = true
+      before_compute = true
+    }
+
+    # EBS 볼륨을 Pod에 마운트할 수 있게 하는 CSI Driver
+    aws-ebs-csi-driver = {
+      most_recent    = true
       before_compute = true
     }
   }
