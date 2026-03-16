@@ -44,6 +44,27 @@ module "eks" {
   # 클러스터 생성한 IAM 사용자를 자동 admin으로 등록
   enable_cluster_creator_admin_permissions = true
 
+  # EKS Access Entry 기반 권한 관리
+  # - cluster creator: 최초 클러스터 생성 IAM 주체를 admin으로 등록
+  # - ops EC2: SSM으로 접속한 운영용 EC2에서 kubectl/helm 사용 가능하도록 admin 권한 부여
+  access_entries = merge(
+    {
+      ops_ec2 = {
+        principal_arn = var.ops_ec2_role_arn
+
+        policy_associations = {
+          cluster_admin = {
+            policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+            access_scope = {
+              type = "cluster"
+            }
+          }
+        }
+      }
+    },
+    var.access_entries
+  )
+
   vpc_id                   = var.vpc_id
   subnet_ids               = var.subnet_ids
   control_plane_subnet_ids = var.control_plane_subnet_ids
