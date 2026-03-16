@@ -19,6 +19,11 @@ module "vpc" {
     "10.0.12.0/24"
   ]
 
+  database_subnets = [
+    "10.0.21.0/24",
+    "10.0.22.0/24"
+  ]
+
   tags = {
     Project     = "demo"
     Environment = "dev"
