@@ -35,6 +35,9 @@ module "eks" {
     }
   }
 
+  ops_ec2_role_arn = module.ops_ec2.iam_role_arn
+
+
   tags = {
     Project     = "devops-project"
     Environment = "dev"
