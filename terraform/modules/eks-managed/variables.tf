@@ -28,6 +28,17 @@ variable "node_groups" {
   type        = any
 }
 
+variable "ops_ec2_role_arn" {
+  description = "IAM role ARN for ops EC2 to access EKS via Access Entry"
+  type        = string
+}
+
+variable "access_entries" {
+  description = "Additional EKS access entries"
+  type        = map(any)
+  default     = {}
+}
+
 variable "tags" {
   description = "Tags"
   type        = map(string)
