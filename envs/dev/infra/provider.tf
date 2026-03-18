@@ -10,6 +10,6 @@ terraform {
 }
 
 provider "aws" {
-  profile = "devops"
+  profile = "truve-admin"
   region  = "ap-northeast-2"
 }

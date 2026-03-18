@@ -3,7 +3,7 @@ module "rds" {
 
   identifier = "dev-mysql"
 
-  db_name  = "appdb"
+  db_name  = "truve_db"
   username = "admin"
   password = "test@123"
 
@@ -27,7 +27,7 @@ module "rds" {
   skip_final_snapshot     = true
 
   tags = {
-    Project     = "devops-project"
+    Project     = "truve"
     Environment = "dev"
     Terraform   = "true"
   }

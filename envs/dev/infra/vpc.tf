@@ -1,7 +1,7 @@
 module "vpc" {
   source = "../../../modules/vpc"
 
-  name     = "demo-vpc"
+  name     = "truve-vpc"
   vpc_cidr = "10.0.0.0/16"
 
   azs = [
@@ -25,7 +25,7 @@ module "vpc" {
   ]
 
   tags = {
-    Project     = "demo"
+    Project     = "truve"
     Environment = "dev"
     Terraform   = "true"
   }

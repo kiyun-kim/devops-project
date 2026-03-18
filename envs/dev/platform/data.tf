@@ -2,11 +2,11 @@ data "terraform_remote_state" "infra" {
   backend = "s3"
 
   config = {
-    bucket         = "devops-prj-tfstate"
+    bucket         = "truve-tfstate"
     key            = "envs/dev/infra/terraform.tfstate"
     region         = "ap-northeast-2"
     encrypt        = true
-    dynamodb_table = "devops-prj-tfstate-lock"
+    dynamodb_table = "terraform-lock"
   }
 }
 

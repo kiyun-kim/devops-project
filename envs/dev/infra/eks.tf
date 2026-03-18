@@ -1,7 +1,7 @@
 module "eks" {
   source = "../../../modules/eks-managed"
 
-  cluster_name       = "dev-eks-v2"
+  cluster_name       = "truve-dev-cluster"
   kubernetes_version = "1.34"
 
   # VPC 모듈 output 참조
@@ -38,7 +38,7 @@ module "eks" {
   ops_ec2_role_arn = module.ops_ec2.iam_role_arn
 
   tags = {
-    Project     = "devops-project"
+    Project     = "truve"
     Environment = "dev"
     Terraform   = "true"
   }
