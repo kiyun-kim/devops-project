@@ -3,9 +3,9 @@ module "rds" {
 
   identifier = "dev-mysql"
 
-  db_name  = "truve-db"
+  db_name  = "truvedb"
   username = "admin"
-  password = "truve#12!@po"
+  password = "truve1234!"
 
   instance_class        = "db.t4g.micro"
   allocated_storage     = 20
