@@ -34,15 +34,18 @@ resource "aws_iam_role_policy_attachment" "ebs_csi_driver" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 21.0"
+  version = "20.37.2"
 
-  name               = var.cluster_name
-  kubernetes_version = var.kubernetes_version
+  cluster_name             = var.cluster_name
+  cluster_version          = var.cluster_version
+  vpc_id                   = var.vpc_id
+  subnet_ids               = var.subnet_ids
+  control_plane_subnet_ids = var.control_plane_subnet_ids
 
   # CloudWatch 로그 사용 안함 (Loki 등 외부 스택 사용 예정)
   create_cloudwatch_log_group = false
 
-  addons = {
+  cluster_addons = {
     # Kubernetes 내부 DNS
     coredns = {
       most_recent = true # EKS 버전에 맞는 최신 버전 자동 선택
@@ -79,7 +82,7 @@ module "eks" {
   }
 
   # API 서버 퍼블릭 접근 허용
-  endpoint_public_access = true
+  cluster_endpoint_public_access = true
 
   # 클러스터 생성한 IAM 사용자를 자동 admin으로 등록
   enable_cluster_creator_admin_permissions = true
@@ -104,10 +107,6 @@ module "eks" {
     },
     var.access_entries
   )
-
-  vpc_id                   = var.vpc_id
-  subnet_ids               = var.subnet_ids
-  control_plane_subnet_ids = var.control_plane_subnet_ids
 
   eks_managed_node_groups = var.node_groups
 

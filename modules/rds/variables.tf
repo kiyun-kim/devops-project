@@ -3,22 +3,6 @@ variable "identifier" {
   description = "RDS instance identifier"
 }
 
-variable "db_name" {
-  type        = string
-  description = "Initial database name"
-}
-
-variable "username" {
-  type        = string
-  description = "Master username"
-}
-
-variable "password" {
-  type        = string
-  description = "Master password"
-  sensitive   = true
-}
-
 variable "instance_class" {
   type        = string
   description = "RDS instance class"
@@ -37,14 +21,26 @@ variable "max_allocated_storage" {
   default     = 100
 }
 
-variable "engine_version" {
+variable "db_name" {
   type        = string
-  description = "MySQL engine version"
+  description = "Initial database name"
 }
 
-variable "family" {
+variable "username" {
   type        = string
-  description = "DB parameter group family"
+  description = "Master username"
+}
+
+variable "password" {
+  type        = string
+  description = "Master password"
+  sensitive   = true
+}
+
+variable "multi_az" {
+  type        = bool
+  description = "Enable Multi-AZ"
+  default     = true
 }
 
 variable "major_engine_version" {
@@ -70,12 +66,6 @@ variable "admin_security_group_id" {
 variable "eks_node_security_group_id" {
   type        = string
   description = "Security group ID of EKS node group"
-}
-
-variable "multi_az" {
-  type        = bool
-  description = "Enable Multi-AZ"
-  default     = false
 }
 
 variable "backup_retention_period" {

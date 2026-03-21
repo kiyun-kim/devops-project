@@ -36,44 +36,51 @@ resource "aws_vpc_security_group_ingress_rule" "mysql_from_eks" {
 
 module "rds" {
   source  = "terraform-aws-modules/rds/aws"
-  version = "7.0.0"
+  version = "6.8.0"
 
   identifier = var.identifier
 
-  engine               = "mysql"
-  engine_version       = var.engine_version
-  family               = var.family
-  major_engine_version = var.major_engine_version
+  engine                = "mysql"
+  engine_version        = "8.0"
+  instance_class        = "db.t4g.micro"
+  allocated_storage     = "20"
+  max_allocated_storage = "100"
 
-  instance_class        = var.instance_class
-  allocated_storage     = var.allocated_storage
-  max_allocated_storage = var.max_allocated_storage
+  db_name  = var.db_name
+  username = var.username
 
-  db_name                     = var.db_name
-  username                    = var.username
-  manage_master_user_password = false        # 비밀번호를 AWS Secrets Manager 자동관리 방식으로 안 쓰겠다는 뜻
-  password_wo                 = var.password # 직접 넣은 비밀번호 사용
-  password_wo_version         = 1            # 비밀번호 버전, RDS 모듈에서 관리하는 비밀번호가 아니므로 버전은 1로 고정
-  port                        = 3306
+  # 비밀번호를 AWS Secrets Manager 자동관리 방식으로 안 쓰겠다는 뜻
+  manage_master_user_password = false
+  password                    = var.password
 
-  multi_az                = var.multi_az
-  backup_retention_period = var.backup_retention_period
-  deletion_protection     = var.deletion_protection # 삭제 보호 비활성화 (default false)
-  skip_final_snapshot     = var.skip_final_snapshot # destroy 시 final snapshot 없이 바로 삭제 (default true)
-
+  port     = 3306
+  multi_az = var.multi_az
 
   create_db_subnet_group = true
   subnet_ids             = var.subnet_ids
 
   vpc_security_group_ids = [aws_security_group.rds.id]
 
-  publicly_accessible = false
-  storage_encrypted   = true
+  create_db_parameter_group = true
+  family                    = "mysql8.0"
+
+  create_db_option_group = true
+  # MySQL 8.0 버전에 맞는 옵션 그룹이 자동 생성되도록 major_engine_version만 지정
+  major_engine_version = "8.0"
+
+  backup_retention_period = var.backup_retention_period
+  backup_window           = "03:00-06:00"
+  maintenance_window      = "Mon:00:00-Mon:03:00"
+
+  # 삭제 보호 비활성화 (default false)
+  deletion_protection = var.deletion_protection
+  # destroy 시 final snapshot 없이 바로 삭제 (default true)
+  skip_final_snapshot = var.skip_final_snapshot
 
   enabled_cloudwatch_logs_exports = ["error", "general", "slowquery"]
 
-  maintenance_window = "Mon:00:00-Mon:03:00"
-  backup_window      = "03:00-06:00"
+  publicly_accessible = false
+  storage_encrypted   = true
 
   tags = merge(var.tags, {
     Name = var.identifier
