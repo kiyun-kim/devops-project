@@ -1,48 +1,3 @@
-locals {
-  default_user_data = <<-EOF
-    #!/bin/bash
-    set -euxo pipefail
-
-    dnf update -y
-    dnf install -y \
-      unzip \
-      tar \
-      gzip \
-      git \
-      jq \
-      wget \
-      curl \
-      mysql \
-      bash-completion
-
-    # AWS CLI v2
-    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
-    unzip -q /tmp/awscliv2.zip -d /tmp
-    /tmp/aws/install --update
-
-    # kubectl
-    KUBECTL_VERSION="$(curl -L -s https://dl.k8s.io/release/stable.txt)"
-    curl -L -o /usr/local/bin/kubectl "https://dl.k8s.io/release/$${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
-    chmod +x /usr/local/bin/kubectl
-
-    # Helm
-    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-
-    # Terraform
-    TERRAFORM_VERSION="1.11.4"
-    curl -L -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/$${TERRAFORM_VERSION}/terraform_$${TERRAFORM_VERSION}_linux_amd64.zip"
-    unzip -q /tmp/terraform.zip -d /usr/local/bin
-    chmod +x /usr/local/bin/terraform
-
-    # Session Manager shell convenience
-    cat <<'PROFILE' >/etc/profile.d/ops-tools.sh
-    export PATH=$PATH:/usr/local/bin
-    alias k=kubectl
-    complete -o default -F __start_kubectl k || true
-    PROFILE
-  EOF
-}
-
 resource "aws_security_group" "this" {
   name_prefix = "${var.name}-sg-"
   description = "Security group for ${var.name} SSM instance"
@@ -134,7 +89,7 @@ resource "aws_instance" "this" {
   iam_instance_profile        = aws_iam_instance_profile.this.name
   associate_public_ip_address = var.associate_public_ip_address
 
-  user_data = coalesce(var.user_data, local.default_user_data)
+  user_data = var.user_data
 
   metadata_options {
     http_endpoint               = "enabled"
