@@ -19,8 +19,11 @@ if [[ -z "$INSTANCE_ID" || "$INSTANCE_ID" == "None" ]]; then
   exit 1
 fi
 
-echo "Starting SSM session to ${INSTANCE_NAME} (${INSTANCE_ID})"
+echo "Starting SSM session to ${INSTANCE_NAME} (${INSTANCE_ID}) as ec2-user"
+
 aws ssm start-session \
   --profile "$AWS_PROFILE" \
   --region "$AWS_REGION" \
-  --target "$INSTANCE_ID"
+  --target "$INSTANCE_ID" \
+  --document-name AWS-StartInteractiveCommand \
+  --parameters 'command=["sudo su - ec2-user"]'
