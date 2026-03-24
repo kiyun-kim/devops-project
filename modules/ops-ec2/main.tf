@@ -60,6 +60,9 @@ resource "aws_iam_role_policy" "ops_access" {
           "ec2:DescribeSubnets",
           "ec2:DescribeSecurityGroups",
           "ec2:DescribeVpcs",
+          "ec2:DescribeRouteTables",
+          "ec2:DescribeNatGateways",
+          "ec2:DescribeInternetGateways",
           "elasticloadbalancing:DescribeLoadBalancers",
           "elasticloadbalancing:DescribeTargetGroups",
           "autoscaling:DescribeAutoScalingGroups"
