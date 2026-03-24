@@ -4,7 +4,7 @@ module "ops_ec2" {
   name                        = "ops-ec2"
   vpc_id                      = module.vpc.vpc_id
   subnet_id                   = module.vpc.private_subnets[0] # 퍼블릭 서브넷 1개 선택
-  instance_type               = "t3.micro"
+  instance_type               = "t3a.medium"
   associate_public_ip_address = false
 
   user_data = <<-EOF
