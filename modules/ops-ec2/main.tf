@@ -106,6 +106,14 @@ resource "aws_iam_policy" "ops_ec2_route53_change" {
           "route53:ListResourceRecordSets"
         ]
         Resource = "arn:aws:route53:::hostedzone/${var.route53_zone_id}"
+      },
+      {
+        Sid    = "Route53GetChange"
+        Effect = "Allow"
+        Action = [
+          "route53:GetChange"
+        ]
+        Resource = "arn:aws:route53:::change/*"
       }
     ]
   })
