@@ -2,11 +2,13 @@ data "terraform_remote_state" "infra" {
   backend = "s3"
 
   config = {
-    bucket         = "truve-dev-tfstate"
-    key            = "envs/dev/infra/terraform.tfstate"
-    region         = "ap-northeast-2"
-    encrypt        = true
-    dynamodb_table = "truve-dev-tf-lock"
+    bucket  = "truve-dev-tfstate"
+    key     = "dev/infra/terraform.tfstate"
+    region  = "ap-northeast-2"
+    encrypt = true
+    # dynamodb_table = "truve-dev-tf-lock"
+    use_lockfile = true
+    profile      = "truve-admin"
   }
 }
 

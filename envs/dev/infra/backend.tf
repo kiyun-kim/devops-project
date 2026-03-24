@@ -9,11 +9,12 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "truve-dev-tfstate"
-    key            = "dev/infra/terraform.tfstate"
-    region         = "ap-northeast-2"
-    dynamodb_table = "truve-dev-tf-lock"
-    encrypt        = true
-    profile        = "truve-admin"
+    bucket = "truve-dev-tfstate"
+    key    = "dev/infra/terraform.tfstate"
+    region = "ap-northeast-2"
+    # dynamodb_table = "truve-dev-tf-lock"
+    use_lockfile = true
+    encrypt      = true
+    profile      = "truve-admin"
   }
 }
