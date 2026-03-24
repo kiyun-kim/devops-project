@@ -8,7 +8,7 @@ data "terraform_remote_state" "infra" {
     encrypt = true
     # dynamodb_table = "truve-dev-tf-lock"
     use_lockfile = true
-    profile      = "truve-admin"
+    # profile      = "truve-admin"
   }
 }
 
