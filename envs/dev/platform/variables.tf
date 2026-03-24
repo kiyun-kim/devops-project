@@ -12,8 +12,3 @@ variable "argocd_alb_name" {
   description = "ALB name for ArgoCD"
   type        = string
 }
-
-variable "route53_zone_name" {
-  description = "Route53 hosted zone name"
-  type        = string
-}

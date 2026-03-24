@@ -1,8 +1,3 @@
-data "aws_route53_zone" "this" {
-  name         = var.route53_zone_name
-  private_zone = false
-}
-
 data "aws_lb" "argocd" {
   name = var.argocd_alb_name
 
@@ -12,7 +7,7 @@ data "aws_lb" "argocd" {
 }
 
 resource "aws_route53_record" "argocd" {
-  zone_id = data.aws_route53_zone.this.zone_id
+  zone_id = "Z09263044C7J602NPFIC"
   name    = var.argocd_host
   type    = "A"
 
