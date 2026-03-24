@@ -82,6 +82,40 @@ resource "aws_iam_role_policy" "ops_access" {
   })
 }
 
+# ops-ec2-role 에 Route53 레코드 변경 권한 추가
+resource "aws_iam_policy" "ops_ec2_route53_change" {
+  name        = "${locals.project_name}-${locals.environment}-ops-ec2-route53-change"
+  description = "Allow Route53 record changes for Terraform on ops EC2"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "Route53ChangeRecordSets"
+        Effect = "Allow"
+        Action = [
+          "route53:ChangeResourceRecordSets"
+        ]
+        Resource = "arn:aws:route53:::hostedzone/${locals.route53_zone_id}"
+      },
+      {
+        Sid    = "Route53ReadRecordSets"
+        Effect = "Allow"
+        Action = [
+          "route53:GetHostedZone",
+          "route53:ListResourceRecordSets"
+        ]
+        Resource = "arn:aws:route53:::hostedzone/${locals.route53_zone_id}"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ops_ec2_route53_change" {
+  role       = "ops-ec2-role"
+  policy_arn = aws_iam_policy.ops_ec2_route53_change.arn
+}
+
 resource "aws_iam_role_policy" "terraform_backend_access" {
   name = "${var.name}-terraform-backend-access"
   role = aws_iam_role.this.id
