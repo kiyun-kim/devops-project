@@ -82,9 +82,9 @@ resource "aws_iam_role_policy" "ops_access" {
   })
 }
 
-# ops-ec2-role 에 Route53 레코드 변경 권한 추가
+# Route53 레코드 변경 권한은 별도의 정책으로 분리하여 관리
 resource "aws_iam_policy" "ops_ec2_route53_change" {
-  name        = "${locals.project_name}-${locals.environment}-ops-ec2-route53-change"
+  name        = "${var.name}-route53-change"
   description = "Allow Route53 record changes for Terraform on ops EC2"
 
   policy = jsonencode({
@@ -96,7 +96,7 @@ resource "aws_iam_policy" "ops_ec2_route53_change" {
         Action = [
           "route53:ChangeResourceRecordSets"
         ]
-        Resource = "arn:aws:route53:::hostedzone/${locals.route53_zone_id}"
+        Resource = "arn:aws:route53:::hostedzone/${var.route53_zone_id}"
       },
       {
         Sid    = "Route53ReadRecordSets"
@@ -105,7 +105,7 @@ resource "aws_iam_policy" "ops_ec2_route53_change" {
           "route53:GetHostedZone",
           "route53:ListResourceRecordSets"
         ]
-        Resource = "arn:aws:route53:::hostedzone/${locals.route53_zone_id}"
+        Resource = "arn:aws:route53:::hostedzone/${var.route53_zone_id}"
       }
     ]
   })

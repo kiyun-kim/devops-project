@@ -7,6 +7,8 @@ module "ops_ec2" {
   instance_type               = "t3a.medium"
   associate_public_ip_address = false
 
+  route53_zone_id = "Z09263044C7J602NPFIC" # Route53 hosted zone ID (예시값, 실제 값으로 변경 필요)
+
   user_data = <<-EOF
     #!/bin/bash
     set -euxo pipefail

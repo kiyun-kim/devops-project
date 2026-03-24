@@ -13,6 +13,11 @@ variable "subnet_id" {
   type        = string
 }
 
+variable "route53_zone_id" {
+  description = "Route53 hosted zone id for DNS record changes"
+  type        = string
+}
+
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
