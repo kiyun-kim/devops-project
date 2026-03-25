@@ -30,7 +30,7 @@ resource "aws_sqs_queue" "karpenter_interruption" {
   tags = {
     Name        = local.karpenter_interruption_queue
     Environment = local.environment
-    ManagedBy   = "terraform"
+    Terraform   = "true"
   }
 }
 
@@ -151,7 +151,7 @@ resource "aws_iam_role" "karpenter_node" {
   tags = {
     Name        = local.karpenter_node_role_name
     Environment = local.environment
-    ManagedBy   = "terraform"
+    Terraform   = "true"
   }
 }
 
@@ -201,7 +201,7 @@ resource "aws_iam_role" "karpenter_controller" {
   tags = {
     Name        = local.karpenter_controller_role
     Environment = local.environment
-    ManagedBy   = "terraform"
+    Terraform   = "true"
   }
 }
 
