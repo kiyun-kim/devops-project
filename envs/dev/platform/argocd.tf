@@ -42,11 +42,11 @@ resource "helm_release" "argocd" {
         }
       }
 
-      configs = {
-        params = {
-          "server.insecure" = true # 초기 구축 단계에서 ALB/Ingress 붙이기 전에 포트포워드나 내부 접근으로 확인하기 편하다.
-        }
-      }
+      #   configs = {
+      #     params = {
+      #       "server.insecure" = true # 초기 구축 단계에서 ALB/Ingress 붙이기 전에 포트포워드나 내부 접근으로 확인하기 편하다.
+      #     }
+      #   }
 
       server = {
         service = {
