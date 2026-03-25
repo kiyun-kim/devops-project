@@ -21,9 +21,16 @@ module "eks" {
   ################################################
   # EKS Managed Node Group 설정
   # 분리 기준
-  #   - system: 클러스터 운영용 (ALB Controller, Karpenter 등)
+  #   - system: 클러스터 운영용 (ALB Controller, Karpenter Controller, CoreDNS 등)
+  #   - app: 기본 애플리케이션 워크로드용
   #   - cicd: CI/CD 워크로드 전용
   #   - monitoring: Prometheus/Grafana/Loki 등
+  #
+  # 운영 의도
+  #   - Karpenter Controller 자체는 system 노드그룹에서 고정 운영
+  #   - app 노드그룹은 기본 애플리케이션 수용용으로 최소 구성
+  #   - 실제 scale-out 테스트는 KEDA가 Pod를 늘리고,
+  #     부족한 노드는 Karpenter가 별도 NodePool로 확장하는 구조를 권장
   ################################################
   node_groups = {
     system = {
@@ -38,6 +45,33 @@ module "eks" {
       labels = {
         workload = "system"
       }
+
+      iam_role_additional_policies = {
+        AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      }
+    }
+
+    app = {
+      ami_type       = "AL2023_x86_64_STANDARD"
+      instance_types = ["t3a.large"]
+      capacity_type  = "ON_DEMAND"
+
+      min_size     = 1
+      max_size     = 3
+      desired_size = 1
+
+      labels = {
+        workload  = "app"
+        autoscale = "karpenter"
+      }
+
+      taints = [
+        {
+          key    = "workload"
+          value  = "app"
+          effect = "NO_SCHEDULE"
+        }
+      ]
 
       iam_role_additional_policies = {
         AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
