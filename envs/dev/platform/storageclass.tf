@@ -6,12 +6,14 @@ module "gp3_storage_class" {
   reclaim_policy         = "Delete"
   volume_binding_mode    = "WaitForFirstConsumer"
   allow_volume_expansion = true
-  is_default_class       = true
+  is_default_class       = false # true
 
   parameters = {
-    type      = "gp3"
-    fsType    = "ext4"
-    encrypted = "true"
+    type       = "gp3"
+    fsType     = "ext4"
+    iops       = "3000"
+    throughput = "125"
+    # encrypted  = "true"
   }
 
   #   depends_on = [
