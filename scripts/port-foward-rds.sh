@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-AWS_PROFILE="${AWS_PROFILE:-default}"
+AWS_PROFILE="${AWS_PROFILE:-truve-admin}"
 AWS_REGION="${AWS_REGION:-ap-northeast-2}"
 INSTANCE_NAME="${1:-ops-ec2}"
 RDS_ENDPOINT="${2:-}"

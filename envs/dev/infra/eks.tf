@@ -48,6 +48,14 @@ module "eks" {
         workload = "system"
       }
 
+      taints = [
+        {
+          key    = "workload"
+          value  = "system"
+          effect = "NO_SCHEDULE"
+        }
+      ]
+
       iam_role_additional_policies = {
         AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
       }
