@@ -39,7 +39,7 @@ resource "helm_release" "aws_load_balancer_controller" {
       region      = local.aws_region
       vpcId       = local.vpc_id
 
-      replicaCount = 2
+      replicaCount = 1
 
       serviceAccount = {
         # helm이 서비스 어카운트를 생성하도록 설정
@@ -47,6 +47,19 @@ resource "helm_release" "aws_load_balancer_controller" {
         create = true
         name   = "aws-load-balancer-controller"
       }
+
+      nodeSelector = {
+        workload = "system"
+      }
+
+      tolerations = [
+        {
+          key      = "workload"
+          operator = "Equal"
+          value    = "system"
+          effect   = "NoSchedule"
+        }
+      ]
     })
   ]
 }
