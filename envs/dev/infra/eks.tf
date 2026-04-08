@@ -37,7 +37,7 @@ module "eks" {
   node_groups = {
     system = {
       ami_type       = "AL2023_ARM_64_STANDARD"
-      instance_types = ["t4g.large"]
+      instance_types = ["t4g.medium"]
       capacity_type  = "ON_DEMAND"
 
       min_size     = 0
@@ -63,7 +63,7 @@ module "eks" {
 
     cicd = {
       ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.large"]
+      instance_types = ["t3.micro"]
       capacity_type  = "ON_DEMAND"
 
       min_size     = 0
@@ -89,7 +89,7 @@ module "eks" {
 
     monitoring = {
       ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.large"]
+      instance_types = ["t3a.medium"]
       capacity_type  = "ON_DEMAND"
 
       min_size     = 0
