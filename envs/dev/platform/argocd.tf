@@ -22,26 +22,18 @@ resource "helm_release" "argocd" {
 
   values = [
     yamlencode({
-      global = {
-        nodeSelector = {
-          workload = "system"
-        }
-
-        tolerations = [
-          {
-            key      = "workload"
-            operator = "Equal"
-            value    = "system"
-            effect   = "NoSchedule"
-          }
-        ]
+      nodeSelector = {
+        workload = "system"
       }
 
-      server = {
-        service = {
-          type = "ClusterIP"
+      tolerations = [
+        {
+          key      = "workload"
+          operator = "Equal"
+          value    = "system"
+          effect   = "NoSchedule"
         }
-      }
+      ]
     })
   ]
 
