@@ -361,19 +361,6 @@ resource "helm_release" "karpenter" {
           }
         }
       }
-
-      nodeSelector = {
-        workload = "system"
-      }
-
-      tolerations = [
-        {
-          key      = "workload"
-          operator = "Equal"
-          value    = "system"
-          effect   = "NoSchedule"
-        }
-      ]
     })
   ]
 

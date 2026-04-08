@@ -20,23 +20,6 @@ resource "helm_release" "argocd" {
   atomic          = true
   cleanup_on_fail = true
 
-  values = [
-    yamlencode({
-      nodeSelector = {
-        workload = "system"
-      }
-
-      #     tolerations = [
-      #       {
-      #         key      = "workload"
-      #         operator = "Equal"
-      #         value    = "system"
-      #         effect   = "NoSchedule"
-      #       }
-      #     ]
-    })
-  ]
-
   depends_on = [kubernetes_namespace_v1.argocd]
 }
 
@@ -51,23 +34,6 @@ resource "helm_release" "argocd_image_updater" {
   timeout         = 600
   atomic          = true
   cleanup_on_fail = true
-
-  values = [
-    yamlencode({
-      nodeSelector = {
-        workload = "system"
-      }
-
-      #     tolerations = [
-      #       {
-      #         key      = "workload"
-      #         operator = "Equal"
-      #         value    = "system"
-      #         effect   = "NoSchedule"
-      #       }
-      #     ]
-    })
-  ]
 
   depends_on = [
     kubernetes_namespace_v1.argocd,

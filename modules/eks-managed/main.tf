@@ -47,29 +47,6 @@ resource "aws_iam_role_policy_attachment" "ebs_csi_driver" {
 ############################################
 # EKS Cluster
 ############################################
-locals {
-  system_addon_node_selector = {
-    workload = "system"
-  }
-
-  system_addon_tolerations = [
-    {
-      key    = "node-role.kubernetes.io/control-plane"
-      effect = "NoSchedule"
-    },
-    {
-      key      = "CriticalAddonsOnly"
-      operator = "Exists"
-    },
-    {
-      key      = "workload"
-      operator = "Equal"
-      value    = "system"
-      effect   = "NoSchedule"
-    }
-  ]
-}
-
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "20.37.2"
@@ -90,11 +67,6 @@ module "eks" {
     # Kubernetes 내부 DNS
     coredns = {
       most_recent = true # EKS 버전에 맞는 최신 버전 자동 선택
-
-      configuration_values = jsonencode({
-        nodeSelector = local.system_addon_node_selector
-        tolerations  = local.system_addon_tolerations
-      })
     }
 
     # Pod Identity Agent (IRSA 대신 사용)
@@ -117,13 +89,6 @@ module "eks" {
     # EBS CSI Driver
     aws-ebs-csi-driver = {
       most_recent = true
-
-      configuration_values = jsonencode({
-        controller = {
-          nodeSelector = local.system_addon_node_selector
-          tolerations  = local.system_addon_tolerations
-        }
-      })
 
       pod_identity_association = [
         {

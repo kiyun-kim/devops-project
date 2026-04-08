@@ -15,23 +15,6 @@ resource "helm_release" "metrics_server" {
   timeout         = 600  # 초기 클러스터 상태나 이미지 pull 속도에 따라 설치 시간이 걸릴 수 있어 충분히 긴 timeout 설정
   atomic          = true # 설치/업그레이드 실패 시 helms release를 자동으로 롤백
   cleanup_on_fail = true # 실패 시 불완전 리소스 정리에 도움 됨
-
-  values = [
-    yamlencode({
-      nodeSelector = {
-        workload = "system"
-      }
-
-      tolerations = [
-        {
-          key      = "workload"
-          operator = "Equal"
-          value    = "system"
-          effect   = "NoSchedule"
-        }
-      ]
-    })
-  ]
 }
 
 ###############################################
@@ -64,19 +47,6 @@ resource "helm_release" "aws_load_balancer_controller" {
         create = true
         name   = "aws-load-balancer-controller"
       }
-
-      nodeSelector = {
-        workload = "system"
-      }
-
-      tolerations = [
-        {
-          key      = "workload"
-          operator = "Equal"
-          value    = "system"
-          effect   = "NoSchedule"
-        }
-      ]
     })
   ]
 }
