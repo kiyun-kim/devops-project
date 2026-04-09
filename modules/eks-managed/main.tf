@@ -66,29 +66,29 @@ module "eks" {
   cluster_addons = {
     # Kubernetes 내부 DNS
     coredns = {
-      most_recent = true # EKS 버전에 맞는 최신 버전 자동 선택
+      addon_version = "v1.13.2-eksbuild.4"
     }
 
     # Pod Identity Agent (IRSA 대신 사용)
     eks-pod-identity-agent = {
-      most_recent    = true
+      addon_version  = "v1.3.10-eksbuild.2"
       before_compute = true # 노드 생성 전에 먼저 설치
     }
 
     # Kubernetes 네트워크 라우팅
     kube-proxy = {
-      most_recent = true
+      addon_version = "v1.34.6-eksbuild.2"
     }
 
     # Pod에 AWS ENI를 붙여주는 네트워크 플러그인
     vpc-cni = {
-      most_recent    = true
+      addon_version  = "v1.21.1-eksbuild.7"
       before_compute = true
     }
 
     # EBS CSI Driver
     aws-ebs-csi-driver = {
-      most_recent = true
+      addon_version = "v1.57.1-eksbuild.1"
 
       pod_identity_association = [
         {
