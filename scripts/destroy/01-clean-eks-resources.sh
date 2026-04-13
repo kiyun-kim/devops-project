@@ -97,22 +97,17 @@ delete_stateful_pvcs() {
   done
 }
 
-cleanup_remaining_namespaces() {
-  local ns
-
-  log_section "동적으로 발견된 non-system namespace의 Ingress 정리"
-  while IFS= read -r ns; do
-    [ -n "${ns}" ] || continue
-    delete_namespace_ingresses "${ns}"
-  done < <(list_cleanup_target_namespaces)
-}
-
 log_section "[01] EKS 내부 리소스 정리"
 cleanup_argocd_apps
 
 delete_loadbalancer_services
 delete_stateful_pvcs
-cleanup_remaining_namespaces
+
+log_step "2" "모든 namespace의 Ingress 삭제"
+while IFS= read -r ns; do
+  [ -n "${ns}" ] || continue
+  delete_namespace_ingresses "${ns}"
+done < <(list_non_system_namespaces || true)
 
 log_step "5" "리소스 정리 반영 대기"
 sleep 20

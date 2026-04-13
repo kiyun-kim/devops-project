@@ -135,6 +135,13 @@ list_ingresses() {
       | "\(.metadata.namespace)/\(.metadata.name)"'
 }
 
+list_ingress_names_in_namespace() {
+  local ns="$1"
+
+  kubectl get ingress -n "${ns}" -o json 2>/dev/null \
+    | jq -r '.items[]?.metadata.name'
+}
+
 list_pvcs() {
   kubectl get pvc -A -o json 2>/dev/null \
     | jq -r '.items[]
@@ -159,15 +166,13 @@ list_karpenter_nodes() {
     | sed 's#^node/##'
 }
 
+list_karpenter_node_provider_pairs() {
+  kubectl get nodes -l karpenter.sh/nodepool -o json 2>/dev/null \
+    | jq -r '.items[]
+      | "\(.metadata.name)\t\(.spec.providerID // "")"'
+}
+
 list_ready_nodes() {
   kubectl get nodes --no-headers 2>/dev/null \
     | awk '$2 ~ /Ready/ {print $1}'
-}
-
-list_cleanup_target_namespaces() {
-  {
-    printf '%s\n' "${STATEFUL_NAMESPACES[@]}"
-    printf '%s\n' "${PLATFORM_NAMESPACES[@]}"
-    list_non_system_namespaces || true
-  } | awk 'NF && !seen[$0]++'
 }

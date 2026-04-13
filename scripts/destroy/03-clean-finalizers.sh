@@ -24,6 +24,29 @@ clean_pvc_finalizers() {
   done < <(list_pvc_names_in_namespace "${ns}")
 }
 
+clean_ingress_finalizers() {
+  local ns="$1"
+  local ingress_name
+
+  if ! namespace_exists "${ns}"; then
+    return 0
+  fi
+
+  while IFS= read -r ingress_name; do
+    [ -n "${ingress_name}" ] || continue
+    echo "Ingress finalizer 제거: ${ns}/${ingress_name}"
+    kubectl patch ingress "${ingress_name}" \
+      -n "${ns}" \
+      --type=merge \
+      -p '{"metadata":{"finalizers":[]}}' >/dev/null 2>&1 || true
+    kubectl delete ingress "${ingress_name}" \
+      -n "${ns}" \
+      --ignore-not-found=true \
+      --wait=false \
+      --timeout=30s || true
+  done < <(list_ingress_names_in_namespace "${ns}")
+}
+
 clean_pv_finalizers() {
   local pv_name
 
@@ -35,6 +58,12 @@ clean_pv_finalizers() {
       -p '{"metadata":{"finalizers":[]}}' >/dev/null 2>&1 || true
   done < <(list_pvs)
 }
+
+while IFS= read -r ingress_ref; do
+  [ -n "${ingress_ref}" ] || continue
+  log_step "finalizer" "ingress ${ingress_ref}"
+  clean_ingress_finalizers "${ingress_ref%%/*}"
+done < <(list_ingresses)
 
 for ns in "${STATEFUL_NAMESPACES[@]}"; do
   log_step "finalizer" "pvc ${ns}"
