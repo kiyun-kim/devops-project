@@ -11,34 +11,15 @@ ENVIRONMENT_TAG="${ENVIRONMENT_TAG:-dev}"
 PLATFORM_DIR="${TRUVE_TERRAFORM_DIR}/envs/${ENV_NAME}/platform"
 INFRA_DIR="${TRUVE_TERRAFORM_DIR}/envs/${ENV_NAME}/infra"
 
-APP_NAMESPACES=(
-  truve-auth-service
-  truve-gateway-service
-  truve-musical-service
-  truve-payment-service
-  truve-queue-service
-  truve-ticketing-service
-)
-
 STATEFUL_NAMESPACES=(
   truve-kafka
   truve-redis
-  kubecost
-  observability
-  istio-system
-  external-secrets
 )
 
 PLATFORM_NAMESPACES=(
   argocd
   keda
   karpenter
-)
-
-FINALIZER_NAMESPACES=(
-  "${APP_NAMESPACES[@]}"
-  "${STATEFUL_NAMESPACES[@]}"
-  "${PLATFORM_NAMESPACES[@]}"
 )
 
 SYSTEM_NAMESPACES=(
@@ -174,4 +155,12 @@ list_karpenter_nodes() {
 list_ready_nodes() {
   kubectl get nodes --no-headers 2>/dev/null \
     | awk '$2 ~ /Ready/ {print $1}'
+}
+
+list_cleanup_target_namespaces() {
+  {
+    printf '%s\n' "${STATEFUL_NAMESPACES[@]}"
+    printf '%s\n' "${PLATFORM_NAMESPACES[@]}"
+    list_non_system_namespaces || true
+  } | awk 'NF && !seen[$0]++'
 }

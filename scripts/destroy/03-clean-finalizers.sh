@@ -6,21 +6,13 @@ source "${SCRIPT_DIR}/common.sh"
 
 log_section "[03] namespace finalizer 정리"
 
-for ns in "${FINALIZER_NAMESPACES[@]}"; do
-  log_step "finalizer" "${ns}"
+clean_pv_finalizers() {
+  kubectl get pv -o json 2>/dev/null \
+    | jq '.items[].metadata.finalizers = []' 2>/dev/null \
+    | kubectl apply -f - >/dev/null 2>&1 || true
+}
 
-  if namespace_exists "${ns}"; then
-    kubectl get namespace "${ns}" -o json \
-      | jq '.spec.finalizers = []' \
-      | kubectl replace --raw "/api/v1/namespaces/${ns}/finalize" -f - || true
-
-    kubectl delete ns "${ns}" --ignore-not-found=true --timeout=60s || true
-    wait_for_namespace_deletion "${ns}" 6 5 || true
-  else
-    echo "namespace 없음: ${ns}"
-  fi
-
-  echo
-done
+log_step "finalizer" "pv"
+clean_pv_finalizers
 
 echo "03-clean-finalizers.sh 완료"

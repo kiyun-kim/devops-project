@@ -22,16 +22,15 @@ print_list_or_ok() {
 }
 
 verify_cluster_side() {
-  local non_system_namespaces
-  local terminating_namespaces
   local ingresses
   local lb_services
   local pvcs
   local pvs
-  local ready_nodes
   local karpenter_nodes
   local karpenter_nodepools=""
   local karpenter_nodeclasses=""
+  local argocd_apps=""
+  local argocd_appsets=""
 
   if ! kubectl cluster-info >/dev/null 2>&1; then
     echo
@@ -43,13 +42,10 @@ verify_cluster_side() {
   echo "1. 전체 namespace 확인"
   kubectl get ns || true
 
-  non_system_namespaces="$(list_non_system_namespaces)"
-  terminating_namespaces="$(list_terminating_namespaces)"
   ingresses="$(list_ingresses)"
   lb_services="$(list_loadbalancer_services)"
   pvcs="$(list_pvcs)"
   pvs="$(list_pvs)"
-  ready_nodes="$(list_ready_nodes)"
   karpenter_nodes="$(list_karpenter_nodes)"
 
   if resource_type_available "nodepools.karpenter.sh"; then
@@ -60,22 +56,29 @@ verify_cluster_side() {
     karpenter_nodeclasses="$(kubectl get ec2nodeclasses.karpenter.k8s.aws -o name 2>/dev/null | sed 's#^ec2nodeclasses.karpenter.k8s.aws/##')"
   fi
 
-  print_list_or_ok "2. non-system namespace 확인" "${non_system_namespaces}"
-  print_list_or_ok "3. terminating namespace 확인" "${terminating_namespaces}"
+  if namespace_exists "argocd" && resource_type_available "applications.argoproj.io"; then
+    argocd_apps="$(kubectl get applications.argoproj.io -n argocd -o name 2>/dev/null | sed 's#^applications.argoproj.io/##')"
+  fi
+
+  if namespace_exists "argocd" && resource_type_available "applicationsets.argoproj.io"; then
+    argocd_appsets="$(kubectl get applicationsets.argoproj.io -n argocd -o name 2>/dev/null | sed 's#^applicationsets.argoproj.io/##')"
+  fi
+
+  print_list_or_ok "2. ArgoCD Application 확인" "${argocd_apps}"
+  print_list_or_ok "3. ArgoCD ApplicationSet 확인" "${argocd_appsets}"
   print_list_or_ok "4. ingress 확인" "${ingresses}"
   print_list_or_ok "5. LoadBalancer service 확인" "${lb_services}"
   print_list_or_ok "6. pvc 확인" "${pvcs}"
   print_list_or_ok "7. pv 확인" "${pvs}"
-  print_list_or_ok "8. Ready node 확인" "${ready_nodes}"
-  print_list_or_ok "9. Karpenter node 확인" "${karpenter_nodes}"
-  print_list_or_ok "10. Karpenter NodePool 확인" "${karpenter_nodepools}"
-  print_list_or_ok "11. Karpenter EC2NodeClass 확인" "${karpenter_nodeclasses}"
+  print_list_or_ok "8. Karpenter node 확인" "${karpenter_nodes}"
+  print_list_or_ok "9. Karpenter NodePool 확인" "${karpenter_nodepools}"
+  print_list_or_ok "10. Karpenter EC2NodeClass 확인" "${karpenter_nodeclasses}"
 
-  if [ -n "${terminating_namespaces}" ]; then
+  if [ -n "${pvcs}" ] || [ -n "${pvs}" ]; then
     terminating_status=2
   fi
 
-  if [ -n "${non_system_namespaces}" ] || [ -n "${ingresses}" ] || [ -n "${lb_services}" ] || [ -n "${pvcs}" ] || [ -n "${pvs}" ] || [ -n "${karpenter_nodes}" ] || [ -n "${karpenter_nodepools}" ] || [ -n "${karpenter_nodeclasses}" ]; then
+  if [ -n "${argocd_apps}" ] || [ -n "${argocd_appsets}" ] || [ -n "${ingresses}" ] || [ -n "${lb_services}" ] || [ -n "${pvcs}" ] || [ -n "${pvs}" ] || [ -n "${karpenter_nodes}" ] || [ -n "${karpenter_nodepools}" ] || [ -n "${karpenter_nodeclasses}" ]; then
     status=1
   fi
 }
