@@ -22,7 +22,7 @@ run_step "[로컬 2/4] infra EKS destroy" "06-destroy-infra-eks-from-local.sh"
 run_step "[로컬 3/4] ops-ec2 destroy" "07-destroy-ops-ec2-from-local.sh"
 
 log_section "[로컬 4/4] 최종 비용 리소스 검증"
-bash "${SCRIPT_DIR}/04-verify-empty.sh" final
+bash "${SCRIPT_DIR}/08-verify-final-state.sh"
 
 echo
 echo "run-from-local.sh 완료"

@@ -18,7 +18,7 @@ run_step "[3/5] platform addon 정리" "02-delete-platform-addons.sh"
 
 log_section "[4/5] EKS 삭제 전 필수 리소스 검증"
 set +e
-bash "${SCRIPT_DIR}/04-verify-empty.sh" pre-terraform
+bash "${SCRIPT_DIR}/04-verify-pre-platform-destroy.sh"
 verify_status=$?
 set -e
 
@@ -26,7 +26,7 @@ if [ "${verify_status}" -eq 2 ]; then
   echo "PVC/PV 잔여물 발견 - PV finalizer 정리 진행"
   bash "${SCRIPT_DIR}/03-clean-finalizers.sh"
   set +e
-  bash "${SCRIPT_DIR}/04-verify-empty.sh" pre-terraform
+  bash "${SCRIPT_DIR}/04-verify-pre-platform-destroy.sh"
   verify_status=$?
   set -e
   if [ "${verify_status}" -ne 0 ]; then

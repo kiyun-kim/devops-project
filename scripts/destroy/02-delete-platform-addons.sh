@@ -33,12 +33,14 @@ delete_namespace_bundle() {
     return 0
   fi
 
-  kubectl delete all --all -n "${ns}" --ignore-not-found=true --timeout=180s || true
-  kubectl delete pvc --all -n "${ns}" --ignore-not-found=true --timeout=180s || true
+  kubectl delete deployment --all -n "${ns}" --ignore-not-found=true --timeout=180s || true
+  kubectl delete statefulset --all -n "${ns}" --ignore-not-found=true --timeout=180s || true
+  kubectl delete daemonset --all -n "${ns}" --ignore-not-found=true --timeout=180s || true
+  kubectl delete ingress --all -n "${ns}" --ignore-not-found=true --timeout=180s || true
+  kubectl delete service --all -n "${ns}" --ignore-not-found=true --timeout=180s || true
   kubectl delete serviceaccount --all -n "${ns}" --ignore-not-found=true --timeout=120s || true
   kubectl delete configmap --all -n "${ns}" --ignore-not-found=true --timeout=120s || true
   kubectl delete secret --all -n "${ns}" --ignore-not-found=true --timeout=120s || true
-  kubectl delete ns "${ns}" --ignore-not-found=true --timeout=180s || true
 }
 
 log_section "[02] platform addon 정리"
