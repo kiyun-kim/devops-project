@@ -62,25 +62,25 @@ module "eks" {
     }
 
     cicd = {
-      ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.micro"]
-      capacity_type  = "ON_DEMAND"
+      ami_type       = "AL2023_ARM_64_STANDARD"
+      instance_types = ["t4g.medium"]
+      capacity_type  = "SPOT"
 
       min_size     = 0
       max_size     = 2
-      desired_size = 0
+      desired_size = 1
 
       labels = {
         workload = "cicd"
       }
 
-      taints = [
-        {
-          key    = "workload"
-          value  = "cicd"
-          effect = "NO_SCHEDULE"
-        }
-      ]
+      # taints = [
+      #   {
+      #     key    = "workload"
+      #     value  = "cicd"
+      #     effect = "NO_SCHEDULE"
+      #   }
+      # ]
 
       iam_role_additional_policies = {
         AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
